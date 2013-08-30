@@ -1,0 +1,5 @@
+Compiler:
+-g -pdsw225 -fr"$(Proj_dir)\Debug" -i"..\INCLUDE" -i".\INCLUDE" -d"_DEBUG" -d"LARGE_MODEL" -ml -v28 --float_support=fpu32
+
+Linker:
+-c -ecode_start -heap1000 -m".\Debug\Sherlock.map" -o".\Debug\Sherlock.out" -stack1000 -w -x -l"rts2800_fpu32.lib"
