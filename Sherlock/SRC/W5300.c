@@ -180,3 +180,273 @@ unsigned char Detect_Gateway(void)
 
 }
 
+
+/**************************************************************************
+Set SOCKETn in TCP Server mode
+Return TRUE if Set OK
+Return FALSE if failed
+**************************************************************************/
+unsigned char SOCKET_Listen(SOCKET s)
+{
+	unsigned char  *ptr;
+
+	Para *param=(Para *)Parameters;
+	
+	/* Set socket port number */
+	ptr=(unsigned char *)Sn_PORTR0(s);
+	*ptr=param->Sn_SPORT[s][0];
+	ptr++;
+	*ptr=param->Sn_SPORT[s][1];
+	
+	ptr=(unsigned char *)Sn_MR1(s);	/* Set SOCKETn in TCP mode */
+	*ptr=Sn_MR_TCP;
+	
+	ptr=(unsigned char *)Sn_CR1(s);	/* Open SOCKETn */
+	*ptr=Sn_CR_OPEN;
+
+	ptr=(unsigned char *)Sn_SSR1(s);	/* Set SOCKETn in TCP mode */
+	if(*ptr!=SOCK_INIT)
+	{
+		ptr=(unsigned char *)Sn_CR1(s);	/* Close SOCKETn */
+		*ptr=Sn_CR_CLOSE;
+		
+		return false;
+	}
+
+	ptr=(unsigned char *)Sn_CR1(s);	/* Set Socketn in TCP Server*/
+	*ptr=Sn_CR_LISTEN;
+
+	ptr=(unsigned char *)Sn_SSR1(s);	/* Set SOCKETn in TCP mode */
+	if(*ptr!=SOCK_LISTEN)
+	{
+		ptr=(unsigned char *)Sn_CR1(s);	/* Close SOCKETn */
+		*ptr=Sn_CR_CLOSE;
+		
+		return false;
+	}
+
+	return true;
+}
+
+/**************************************************************************
+Set SOCKETn in TCP Cient mode
+Return TRUE if Set OK
+Return FALSE if failed
+**************************************************************************/
+unsigned char SOCKET_Connect(SOCKET s)
+{
+	unsigned char  *ptr;
+
+	Para *param=(Para *)Parameters;
+	
+	/* Set socket port number */
+	ptr=(unsigned char *)Sn_PORTR0(s);
+	*ptr=param->Sn_SPORT[s][0];
+	ptr++;
+	*ptr=param->Sn_SPORT[s][1];
+	
+	/* Set SOCKET Destination IP Address */
+	ptr=(unsigned char *)Sn_DIPR0(s);
+	*ptr=param->Sn_DIP[s][0];
+	ptr++;
+	*ptr=param->Sn_DIP[s][1];
+	ptr++;
+	*ptr=param->Sn_DIP[s][2];
+	ptr++;
+	*ptr=param->Sn_DIP[s][3];
+
+	/* Set SOCKET Destination Port Number */
+	ptr=(unsigned char *)Sn_DPORTR0(s);
+	*ptr=param->Sn_DPORT[s][0];
+	ptr++;
+	*ptr=param->Sn_DPORT[s][1];
+
+	ptr=(unsigned char *)Sn_MR1(s);	/* Set SOCKETn in TCP mode */
+	*ptr=Sn_MR_TCP;
+	
+	ptr=(unsigned char *)Sn_CR1(s);	/* Open SOCKETn */
+	*ptr=Sn_CR_OPEN;
+
+	ptr=(unsigned char *)Sn_SSR1(s);	/* Set SOCKETn in TCP mode */
+	if(*ptr!=SOCK_INIT)
+	{
+		ptr=(unsigned char *)Sn_CR1(s);	/* Close SOCKETn */
+		*ptr=Sn_CR_CLOSE;
+		
+		return false;
+	}
+
+	ptr=(unsigned char *)Sn_CR1(s);	/* Make connection to peer SOCKET */
+	*ptr=Sn_CR_CONNECT;
+
+	return true;
+}
+
+/**************************************************************************
+Set SOCKETn in UDP mode
+Return TRUE if Set OK
+Return FALSE if failed
+**************************************************************************/
+unsigned char SOCKET_UDP(SOCKET s)
+{
+	unsigned char  *ptr;
+
+	Para *param=(Para *)Parameters;
+	
+	/* Set socket port number */
+	ptr=(unsigned char *)Sn_PORTR0(s);
+	*ptr=param->Sn_SPORT[s][0];
+	ptr++;
+	*ptr=param->Sn_SPORT[s][1];
+	
+	/* Set SOCKET Destination IP Address */
+	ptr=(unsigned char *)Sn_DIPR0(s);
+	*ptr=param->Sn_DIP[s][0];
+	ptr++;
+	*ptr=param->Sn_DIP[s][1];
+	ptr++;
+	*ptr=param->Sn_DIP[s][2];
+	ptr++;
+	*ptr=param->Sn_DIP[s][3];
+
+	/* Set SOCKET Destination Port Number */
+	ptr=(unsigned char *)Sn_DPORTR0(s);
+	*ptr=param->Sn_DPORT[s][0];
+	ptr++;
+	*ptr=param->Sn_DPORT[s][1];
+
+	ptr=(unsigned char *)Sn_MR1(s);	/* Set SOCKETn in TCP mode */
+	*ptr=Sn_MR_UDP;
+	
+	ptr=(unsigned char *)Sn_CR1(s);	/* Open SOCKETn */
+	*ptr=Sn_CR_OPEN;
+
+	ptr=(unsigned char *)Sn_SSR1(s);	/* Set SOCKETn in UDP mode */
+	if(*ptr!=SOCK_UDP)
+	{
+		ptr=(unsigned char *)Sn_CR1(s);	/* Close SOCKETn */
+		*ptr=Sn_CR_CLOSE;
+		
+		return false;
+	}
+
+	return true;
+}
+
+/*************************************************************************
+SOCKETn received DATA process
+Copy Data in Rx_Buffer
+Return Data size
+*************************************************************************/
+unsigned int Rx_Process(SOCKET s)
+{
+	unsigned int size;		/* Assume that Data size is no more than 64K */
+	unsigned int i,j;
+	unsigned char  *ptr;
+
+	Para *param=(Para *)Parameters;
+
+	ptr=(unsigned char *)Sn_RX_RSR2(s);	/* Read Data Size */
+	size=*ptr;
+	ptr++;
+	size=(size<<8)+*ptr;
+	
+	ptr=(unsigned char *)Sn_RX_FIFOR(s);
+	if(param->Sn_MODE[0]!=UDP_MODE)
+	{	/* TCP mode */
+		j=size/2-1;
+
+		size=*ptr;								/* Read the real size of the DATA packet */
+		size<<=8;
+		ptr++;
+		size+=*ptr;
+		ptr--;
+	}
+	else
+	{	/* UDP mode */
+		j=size/2-4;
+
+		param->Sn_DIP[0][0]=*ptr;						/* Destination IP */
+		ptr++;
+		param->Sn_DIP[0][1]=*ptr;
+		ptr--;
+		param->Sn_DIP[0][2]=*ptr;
+		ptr++;
+		param->Sn_DIP[0][3]=*ptr;
+		ptr--;
+		
+		param->Sn_DPORT[0][0]=*ptr;					/* Detionation Port number */
+		ptr++;
+		param->Sn_DPORT[0][1]=*ptr;
+		ptr--;
+
+		size=*ptr;								/* Read the real size of the DATA packet */
+		size<<=8;
+		ptr++;
+		size+=*ptr;
+		ptr--;
+	}
+
+	i=0;
+	while(j!=0)									/* Copy Data to Tx_Buffer */
+	{
+		Data_Buffer[i]=*ptr;
+		i++;
+		ptr++;
+		Data_Buffer[i]=*ptr;
+		i++;
+		ptr--;
+		j--;
+	}
+	
+	ptr=(unsigned char *)Sn_CR1(s);		/* RECV command */
+	*ptr=Sn_CR_RECV;
+
+	return size;
+}
+
+
+/*************************************************************************
+Transmit DATA through SOCKETn
+Data in Tx_Buffer is to be transmited
+Input: Data size
+*************************************************************************/
+unsigned char Tx_Process(SOCKET s, unsigned int size)
+{
+	unsigned int i,j;		/* Assume that Data size is no more than 64K */
+	unsigned char  *ptr;
+	
+	Para *param=(Para *)Parameters;
+
+	if(size>S_TX_SIZE)
+		return false;
+
+	if(size&0x0001)
+		j=(size+1)/2;
+	else
+		j=size/2;
+
+	ptr=(unsigned char *)Sn_TX_FIFOR(s);
+	i=0;
+	while(j!=0)				/* Copy Tx_Buffer data to Tx memory */
+	{
+		*ptr=Data_Buffer[i];
+		i++;
+		ptr++;
+		*ptr=Data_Buffer[i];
+		i++;
+		ptr--;
+		j--;
+	}
+	
+	ptr=(unsigned char *)Sn_TX_WRSR2(s);	/* sets transmission data size to Sn_TX_WRSR */
+	*ptr=size/256;
+	ptr++;
+	*ptr=size;
+
+	ptr=(unsigned char *)Sn_CR1(s);
+	*ptr=Sn_CR_SEND;
+
+
+	return true;
+}

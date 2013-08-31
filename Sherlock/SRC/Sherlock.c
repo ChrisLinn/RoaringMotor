@@ -140,9 +140,49 @@ void Load_Parameters(void)
 //	UART_RX=0;
 }
 
+
+/***************************************************************************************
+Check Destination IP and PORT number in UDP mode
+***************************************************************************************/
+void Check_UDP_Destination(void)
+{
+	unsigned char  *ptr;
+	unsigned char i;
+
+	Para *param=(Para *)Parameters;
+	
+	ptr=(unsigned char *)Sn_DIPR0(0);
+	for(i=0;i<4;i++)
+	{
+		if(param->Sn_DIP[0][i]!=*ptr)
+		{		
+			ptr=(unsigned char *)Sn_CR1(0);	/* Close SOCKETn */
+			*ptr=Sn_CR_CLOSE;
+			SOCKET_UDP(0);
+			return;
+		}
+		ptr++;
+	}
+	
+	ptr=(unsigned char *)Sn_DPORTR0(0);
+	for(i=0;i<2;i++)
+	{
+		if(param->Sn_DPORT[0][i]!=*ptr)
+		{		
+			ptr=(unsigned char *)Sn_CR1(0);	/* Close SOCKETn */
+			*ptr=Sn_CR_CLOSE;
+			SOCKET_UDP(0);
+			return;
+		}
+		ptr++;
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////
 void main(void)
 {
+	unsigned int i;
+
 	//指向结构体数组的指针
 	Para *param=(Para *)Parameters;
 
@@ -194,7 +234,54 @@ void main(void)
 			//D_OUTPUT1=0;				/* Detect Gateway */
 		;
 
+/************ the following process only use SOCKET0 *******************/
+/******* The usage of other SOCKET is the same as SOCKET0 ********/
+	while(1)
+	{
+		if(S0_Init==0)
+		{
+			S0_Init=1;
+			S0_SendOK=1;
+			if(param->Sn_MODE[0]==TCP_SERVER)
+			{
+				if(SOCKET_Listen(0)==false)
+					S0_Init=0;
+			}
+			else if(param->Sn_MODE[0]==TCP_CLIENT)
+			{
+				if(SOCKET_Connect(0)==false)
+					S0_Init=0;
+			}
+			else
+			{
+				if(SOCKET_UDP(0)==false)
+					S0_Init=0;
+				else
+					S0_Connect=1;
+			}
+		}
+		
+		if(S0_Receive)		/* If SOCKET0 receive DATA from peer SOCKET and Sned Data OK */
+		{
+			S0_Receive=0;
+			S0_SendOK=0;
 
+			i=Rx_Process(0);
+
+			if(param->Sn_MODE[0]==UDP_MODE)
+				Check_UDP_Destination();
+			Tx_Process(0,i);
+
+		}
+
+		/* Process UART Data 
+		if(UART_RX==1)
+		{
+			if(Check_AT()==true)
+				UART_Process();
+		} */
+		
+	}
 }
 
 //===========================================================================
