@@ -11,4 +11,9 @@ typedef unsigned char	SOCKET;
 extern unsigned char  Data_Buffer[];
 
 extern unsigned char  Parameters[];
-extern void Delay(unsigned int d);
+
+extern char S0_Timeout;
+
+extern void Delay(unsigned long us);
+
+
