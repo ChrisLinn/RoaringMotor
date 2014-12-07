@@ -44,14 +44,15 @@ int main(int argc, char *argv[])
 
         return 1;
     }
-    //从main开始至此，A B process代码一样，都是获取名为"Global\\MyFileMappingObject"的共享内存的指针
+    //从main开始至此，A B process代码一样，都是获取共享内存的指针
 
-    //以下代码，A不停地读共享内存pBuf
+	float* s=(float*)pBuf;
+    //以下代码，不停读写共享内存
     while(1)
-    {
-        cout<<pBuf<<endl;cout<<++i<<endl;
-        cout<<"A process: hit keyboard to receive from B process"<<endl;
-        //getchar();
+	{
+		printf("%f\n",*++s);
+		cout<<"A process: hit keyboard to receive from B process"<<endl;
+		getchar();
     }
 
     UnmapViewOfFile(pBuf);

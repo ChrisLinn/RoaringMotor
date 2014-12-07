@@ -41,14 +41,18 @@ int main()
 
         return 1;
     }
-    //从main开始至此，A B process代码一样，都是获取名为"Global\\MyFileMappingObject"的共享内存的指针
+    //从main开始至此，A B process代码一样，都是获取共享内存的指针
 
-    //以下代码，B不停写共享内存pBuf
+	float* s=(float*)pBuf;
+    //以下代码，不停读写共享内存
     while(1)
     {
-        TCHAR s[BUF_SIZE];
-        cout<<"B process: plz input sth. to be transfered to A process."<<endl;
-        cin>>s;
-        memcpy((PVOID)pBuf, s, BUF_SIZE);
+		*s=171.0;
+		*++s=172.0;
+		(*s)++;
+		getchar();
     }
+    UnmapViewOfFile(pBuf);
+    CloseHandle(hMapFile);
+    return 0;
 }
