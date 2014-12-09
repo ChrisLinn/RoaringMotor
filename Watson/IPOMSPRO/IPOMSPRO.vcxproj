@@ -172,8 +172,8 @@
     <CustomBuild Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="C:\Users\LO\Desktop\UPC.bmp" />
     <None Include="res\icon1.ico" />
+    <None Include="UPC.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

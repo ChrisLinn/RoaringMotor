@@ -13,7 +13,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Chinese (Simplified, PRC) resources
+// 中文(简体，中国) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
 LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
@@ -83,7 +83,7 @@ BEGIN
     LTEXT           "中国石油大学（华东）",IDC_STATIC,40,30,119,8
 END
 
-IDD_IPOMSPRO_DIALOG DIALOGEX 0, 0, 811, 433
+IDD_IPOMSPRO_DIALOG DIALOGEX 0, 0, 811, 474
 STYLE DS_SETFONT | DS_MODALFRAME | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "IPOMSPRO"
@@ -100,7 +100,7 @@ BEGIN
     CTEXT           "调试信息窗口",IDC_STATICTSH,95,55,87,9
     CTEXT           "图形绘制窗口",IDC_STATICTSH2,435,55,87,9
     PUSHBUTTON      "Send Command",IDC_SETUPCOM,700,261,70,20
-    CONTROL         "Progress1",IDC_PROGRESS1,"msctls_progress32",0x0,7,415,13,11
+    CONTROL         "Progress1",IDC_PROGRESS1,"msctls_progress32",0x0,7,456,13,11
     CONTROL         "List1",IDC_LIST1,"SysListView32",LVS_REPORT | WS_BORDER,22,75,252,306,WS_EX_CLIENTEDGE
     PUSHBUTTON      "→←",IDC_BUTIMELEFT,715,132,32,17
     PUSHBUTTON      "←→",IDC_BZUTIMERIGHT,754,132,32,17
@@ -125,7 +125,7 @@ BEGIN
     GROUPBOX        "图形操作",IDC_STATIC,668,64,127,172
     GROUPBOX        "发送指令区",IDC_STATIC,667,248,127,77
     CTEXT           "新能源监控系统",IDC_MAINTITLE,276,9,219,35
-    CTEXT           "中国石油大学（华东）  电气工程系",IDC_ADDTITLE,547,413,257,13
+    CTEXT           "中国石油大学（华东）  电气工程系",IDC_ADDTITLE,547,454,257,13
     EDITTEXT        IDC_EDIT9,699,296,72,12,ES_MULTILINE | ES_AUTOHSCROLL | NOT WS_VISIBLE
     CONTROL         "",IDC_STATICUPC,"Static",SS_BITMAP,566,0,15,14
     PUSHBUTTON      "START",IDC_BUTTONTURNON,679,350,39,20
@@ -136,7 +136,8 @@ BEGIN
     COMBOBOX        IDC_COMBOCH4,358,379,67,84,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     COMBOBOX        IDC_COMBOCH5,467,379,67,84,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     COMBOBOX        IDC_COMBOCH6,583,379,67,84,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    GROUPBOX        "系统设置",IDC_STATIC,667,333,127,77
+    GROUPBOX        "系统设置",IDC_STATIC,667,333,129,118
+    PUSHBUTTON      "功率跟踪",IDC_DIY,703,413,48,23
 END
 
 IDD_DIALOG1 DIALOGEX 0, 0, 195, 109
@@ -232,7 +233,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 804
         TOPMARGIN, 7
-        BOTTOMMARGIN, 426
+        BOTTOMMARGIN, 467
     END
 
     IDD_DIALOG1, DIALOG
@@ -295,7 +296,7 @@ END
 // Bitmap
 //
 
-IDB_BITMAPUPC           BITMAP                  "C:\\Users\\LO\\Desktop\\UPC.bmp"
+IDB_BITMAPUPC           BITMAP                  "UPC.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -307,7 +308,7 @@ BEGIN
     IDS_ABOUTBOX            "关于 IPOMSPRO(&A)..."
 END
 
-#endif    // Chinese (Simplified, PRC) resources
+#endif    // 中文(简体，中国) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

@@ -115,6 +115,8 @@ public:
 	CStatic m_PictureUPC;
 	afx_msg void OnBnClickedButtonturnon();
 	afx_msg void OnBnClickedButtonturnoff();
+	afx_msg void OnBnClickedDiy();
+	afx_msg void OnDestroy();
 };
 
 //{{AFX_INSERT_LOCATION}}

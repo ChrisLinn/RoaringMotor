@@ -78,10 +78,10 @@
     <CustomBuild Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="C:\Users\LO\Desktop\UPC.bmp">
+    <None Include="res\icon1.ico">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="res\icon1.ico">
+    <None Include="UPC.bmp">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
