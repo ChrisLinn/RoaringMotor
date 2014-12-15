@@ -5,7 +5,7 @@
 #include "stdafx.h"
 #include "Compiler.h"
 #include "CompilerDlg.h"
-
+#include <locale.h>
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -27,6 +27,7 @@ CCompilerApp::CCompilerApp()
 
 	// TODO: 在此处添加构造代码，
 	// 将所有重要的初始化放置在 InitInstance 中
+	setlocale(LC_CTYPE,"chs");
 }
 
 

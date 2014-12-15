@@ -8,7 +8,7 @@
 #include "afxdialogex.h"
 #include "windows.h"
 #include "shellapi.h"
-
+#include <locale.h>
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -43,6 +43,8 @@ BEGIN_MESSAGE_MAP(CCompilerDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_QUIT, &CCompilerDlg::OnBnClickedQuit)
 	ON_BN_CLICKED(IDC_COMPILE, &CCompilerDlg::OnBnClickedCompile)
 	ON_BN_CLICKED(IDC_RUN, &CCompilerDlg::OnBnClickedRun)
+	ON_BN_CLICKED(IDC_RESTORE, &CCompilerDlg::OnBnClickedRestore)
+	ON_BN_CLICKED(IDC_RESTORE2, &CCompilerDlg::OnBnClickedRestore2)
 END_MESSAGE_MAP()
 
 
@@ -119,7 +121,7 @@ BOOL CCompilerDlg::OnInitDialog()
         NULL,                    // default security
         PAGE_READWRITE,          // read/write access
         0,                       // maximum object size (high-order DWORD)
-        2,                // maximum object size (low-order DWORD)
+        BUF_SIZE,                // maximum object size (low-order DWORD)
         szNameOut);                 // name of mapping object
 
     if (hMapFileOut == NULL)
@@ -132,7 +134,7 @@ BOOL CCompilerDlg::OnInitDialog()
         FILE_MAP_ALL_ACCESS, // read/write permission
         0,
         0,
-        2);
+        BUF_SIZE);
 
     if (pBufOut == NULL)
     {
@@ -151,6 +153,9 @@ BOOL CCompilerDlg::OnInitDialog()
 
 
 
+
+
+
 	CDialogEx::OnInitDialog();
 
 	// 设置此对话框的图标。当应用程序主窗口不是对话框时，框架将自动
@@ -159,7 +164,6 @@ BOOL CCompilerDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
-
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -204,16 +208,16 @@ HCURSOR CCompilerDlg::OnQueryDragIcon()
 void CCompilerDlg::OnBnClickedCompile()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	//获得EDIT 
-	CEdit* pDiyText; 
-	pDiyText = (CEdit*) GetDlgItem(IDC_EDIT1); 
-	CString DiyText;
-	pDiyText-> GetWindowText(DiyText); 
-
-	CopyFile((CString)"DiyRaw.txt",(CString)"Diy.c",false);
-
 	CStdioFile myFile;
 	CFileException fileException;
+	CString DiyText;
+	//获得EDIT  
+	CEdit* pDiyText; 
+	pDiyText = (CEdit*) GetDlgItem(IDC_EDIT1); 
+	pDiyText-> GetWindowText(DiyText);
+
+	CopyFile((CString)"DiyRaw.txt",(CString)"Diy.c",false);
+	
  	if (!myFile.Open(_T("Diy.c"), CFile::modeNoTruncate |  CFile::typeText |  CFile::modeReadWrite, &fileException )){
 		MessageBox(_T("代码生成失败，请重试"),_T("编译"),MB_OK);
 	}
@@ -250,4 +254,50 @@ void CCompilerDlg::OnBnClickedQuit()
     UnmapViewOfFile(pBufOut);
     CloseHandle(hMapFileOut);
 	CDialog::OnCancel();
+}
+
+
+void CCompilerDlg::OnBnClickedRestore()
+{	
+	CStdioFile myFileBackup;
+	CFileException fileException;
+	CString DiyText,strLine;
+	DiyText=strLine="";
+	CEdit* pDiyText; 
+	pDiyText = (CEdit*) GetDlgItem(IDC_EDIT1); 
+	if (!myFileBackup.Open(_T("backup.txt"), CFile::modeNoTruncate |  CFile::typeText |  CFile::modeReadWrite, &fileException )){
+		MessageBox(_T("恢复失败，请重试"),_T("恢复"),MB_OK);
+	}
+	while( myFileBackup.ReadString( strLine ) ){
+		DiyText += strLine+_T("\r\n");
+	}
+	pDiyText-> SetWindowText(DiyText);
+	MessageBox(_T("恢复成功！"),_T("恢复"),MB_OK);
+	myFileBackup.Close();
+	DiyText.ReleaseBuffer();
+	strLine.ReleaseBuffer();
+}
+
+
+void CCompilerDlg::OnBnClickedRestore2()
+{
+	// TODO: Add your control notification handler code here
+	CStdioFile myFile;
+	CFileException fileException;
+	CString DiyText;
+	//获得EDIT  
+	CEdit* pDiyText; 
+	pDiyText = (CEdit*) GetDlgItem(IDC_EDIT1); 
+	pDiyText-> GetWindowText(DiyText);
+
+	
+ 	if (!myFile.Open(_T("backup.txt"), CFile::modeCreate |  CFile::typeText |  CFile::modeReadWrite, &fileException )){
+		MessageBox(_T("备份失败，请重试"),_T("备份"),MB_OK);
+	}
+	myFile.Seek(0,CFile::end);
+	myFile.WriteString(DiyText);
+	MessageBox(_T("备份成功！"),_T("备份"),MB_OK);
+
+	myFile.Close();
+	DiyText.ReleaseBuffer();
 }

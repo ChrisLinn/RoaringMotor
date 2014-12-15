@@ -84,7 +84,7 @@ int main()
         NULL,                    // default security
         PAGE_READWRITE,          // read/write access
         0,                       // maximum object size (high-order DWORD)
-        BUF_SIZE,                // maximum object size (low-order DWORD)
+        2,                // maximum object size (low-order DWORD)
         szNameOut);                 // name of mapping object
 
     if (hMapFileOut == NULL)
@@ -97,7 +97,7 @@ int main()
         FILE_MAP_ALL_ACCESS, // read/write permission
         0,
         0,
-        BUF_SIZE);
+        2);
 
     if (pBufOut == NULL)
     {
@@ -130,5 +130,4 @@ int main()
 }
 void calculate(double* U,double* I,double* output)
 {
-//ʲô
 }

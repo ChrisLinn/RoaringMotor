@@ -32,4 +32,6 @@ public:
 	afx_msg void OnBnClickedQuit();
 	afx_msg void OnBnClickedCompile();
 	afx_msg void OnBnClickedRun();
+	afx_msg void OnBnClickedRestore();
+	afx_msg void OnBnClickedRestore2();
 };

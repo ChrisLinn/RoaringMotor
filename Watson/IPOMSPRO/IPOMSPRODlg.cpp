@@ -224,7 +224,7 @@ BOOL CIPOMSPRODlg::OnInitDialog()
 		NULL,                    // default security
 		PAGE_READWRITE,          // read/write access
 		0,                       // maximum object size (high-order DWORD)
-		2,                // maximum object size (low-order DWORD)
+		BUF_SIZE,                // maximum object size (low-order DWORD)
 		szNameOut);                 // name of mapping object
 
 	if (hMapFileOut == NULL)
@@ -237,7 +237,7 @@ BOOL CIPOMSPRODlg::OnInitDialog()
 		FILE_MAP_ALL_ACCESS, // read/write permission
 		0,
 		0,
-		2);
+		BUF_SIZE);
 
 	if (pBufOut == NULL)
 	{
@@ -1314,7 +1314,7 @@ void CIPOMSPRODlg::OnBnClickedDiy()
 	while(1)
 	{
 		sprintf(buffer,"%lf",Result[0]);
-		MessageBox(buffer, "提示", MB_OK);
+		//MessageBox(buffer, "提示", MB_OK);
 	}
 }
 
